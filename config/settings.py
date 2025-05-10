@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -142,3 +143,16 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.User'
+
+class DjangoSettings(BaseSettings):
+    SECRET_KEY: str
+    DEBUG: bool 
+    ALLOWED_HOSTS: list[str] 
+
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+
+settings = DjangoSettings()
+
+SECRET_KEY = settings.SECRET_KEY
+DEBUG = settings.DEBUG
+ALLOWED_HOSTS = settings.ALLOWED_HOSTS
