@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import AccountLog, Account
-from .services.pay_service import process_account_transaction
+from .services.pay_service import process_account_transaction, process_account_transaction_pessimistic
 
 class AccountCreateSerializer(serializers.ModelSerializer):
     user_name = serializers.CharField(source='user.name', read_only=True)
@@ -69,7 +69,8 @@ class AccountLogCreateSerializer(serializers.ModelSerializer):
         amount = validated_data['amount']
 
         try:
-            new_balance = process_account_transaction(account, transaction_type, amount)
+            # new_balance = process_account_transaction(account, transaction_type, amount)
+            new_balance = process_account_transaction_pessimistic(account.id, transaction_type, amount)
         except ValueError as e:
             raise serializers.ValidationError({'amount': str(e)})
 
